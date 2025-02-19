@@ -80,7 +80,6 @@ class UserFormScreenState extends State<UserFormScreen> {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
             margin: EdgeInsets.all(16.0),
-            height: MediaQuery.of(context).size.height * 0.42,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),

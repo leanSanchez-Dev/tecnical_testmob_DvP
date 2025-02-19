@@ -66,7 +66,6 @@ class AddressFormScreenState extends State<AddressFormScreen> {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
             margin: EdgeInsets.all(16.0),
-            height: MediaQuery.of(context).size.height * 0.52,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
