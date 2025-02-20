@@ -48,8 +48,8 @@ class UserProvider with ChangeNotifier {
 
   // Método para eliminar una dirección
   void removeAddress(Address address) {
-    _user?.addresses.remove(address); // Elimina la dirección de la lista
-    _saveUser(); // Guarda los cambios en SharedPreferences
-    notifyListeners(); // Notifica a los listeners para actualizar la UI
+    _user?.addresses.remove(address);
+    _saveUser();
+    notifyListeners();
   }
 }
