@@ -99,12 +99,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     // Header expandible con avatar
                     SliverToBoxAdapter(
                       child: Container(
-                        key: const ValueKey(
-                          'profile_header_v2',
-                        ), // Clave única para forzar reconstrucción
-                        padding: const EdgeInsets.only(
-                          bottom: AppSpacing.xl,
-                        ), // Padding en lugar de altura fija
+                        height: 200,
                         decoration: const BoxDecoration(
                           gradient: AppGradients.primary,
                           borderRadius: BorderRadius.only(
@@ -113,347 +108,318 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           ),
                         ),
                         child: SafeArea(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(
-                              AppSpacing.lg,
-                              AppSpacing.lg, // Padding superior - NUEVO DISEÑO
-                              AppSpacing.lg,
-                              0,
-                            ),
-                            child: Column(
-                              mainAxisSize:
-                                  MainAxisSize
-                                      .min, // Ajustar al contenido - SIN ALTURA FIJA
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // Avatar con diseño mejorado
-                                Stack(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.all(4),
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: Colors.white,
-                                          width: 3,
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(
-                                              0.2,
-                                            ),
-                                            blurRadius: 20,
-                                            offset: const Offset(0, 8),
-                                          ),
-                                        ],
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // Avatar con diseño mejorado
+                              Stack(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.white,
+                                        width: 3,
                                       ),
-                                      child: CircleAvatar(
-                                        radius:
-                                            45, // Reducido para evitar overflow
-                                        backgroundColor: Colors.white,
-                                        backgroundImage:
-                                            image != null
-                                                ? FileImage(image!)
-                                                : null,
-                                        child:
-                                            image == null
-                                                ? Icon(
-                                                  Icons.person,
-                                                  size: 45, // Reducido
-                                                  color: primaryColor
-                                                      .withOpacity(0.7),
-                                                )
-                                                : null,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.2),
+                                          blurRadius: 20,
+                                          offset: const Offset(0, 8),
+                                        ),
+                                      ],
+                                    ),
+                                    child: CircleAvatar(
+                                      radius: 50,
+                                      backgroundColor: Colors.white,
+                                      backgroundImage:
+                                          image != null
+                                              ? FileImage(image!)
+                                              : null,
+                                      child:
+                                          image == null
+                                              ? Icon(
+                                                Icons.person,
+                                                size: 50,
+                                                color: primaryColor.withOpacity(
+                                                  0.7,
+                                                ),
+                                              )
+                                              : null,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 0,
+                                    child: GestureDetector(
+                                      onTap: pickImage,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          shape: BoxShape.circle,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(
+                                                0.1,
+                                              ),
+                                              blurRadius: 8,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                          ],
+                                        ),
+                                        child: const Icon(
+                                          Icons.camera_alt,
+                                          color: primaryColor,
+                                          size: 20,
+                                        ),
                                       ),
                                     ),
-                                    Positioned(
-                                      bottom: 0,
-                                      right: 0,
-                                      child: GestureDetector(
-                                        onTap: pickImage,
-                                        child: Container(
-                                          padding: const EdgeInsets.all(
-                                            6,
-                                          ), // Reducido
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            shape: BoxShape.circle,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black.withOpacity(
-                                                  0.1,
-                                                ),
-                                                blurRadius: 8,
-                                                offset: const Offset(0, 2),
-                                              ),
-                                            ],
-                                          ),
-                                          child: const Icon(
-                                            Icons.camera_alt,
-                                            color: primaryColor,
-                                            size: 18, // Reducido
-                                          ),
-                                        ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: AppSpacing.md),
+                              // Nombre
+                              Text(
+                                '${user.firstName} ${user.lastName}',
+                                style: AppTextStyles.h2.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: AppSpacing.sm),
+                              // Fecha de nacimiento
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.md,
+                                  vertical: AppSpacing.sm,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(
+                                    AppRadius.full,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(
+                                      Icons.cake_outlined,
+                                      size: 16,
+                                      color: Colors.white,
+                                    ),
+                                    const SizedBox(width: AppSpacing.xs),
+                                    Text(
+                                      DateFormat(
+                                        'dd/MM/yyyy',
+                                      ).format(user.birthDate!),
+                                      style: AppTextStyles.bodyMedium.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(
-                                  height: AppSpacing.sm,
-                                ), // Reducido
-                                // Nombre
-                                Text(
-                                  '${user.firstName} ${user.lastName}',
-                                  style: AppTextStyles.h2.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: AppSpacing.xs,
-                                ), // Reducido
-                                // Fecha de nacimiento
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: AppSpacing.sm, // Reducido
-                                    vertical: AppSpacing.xs, // Reducido
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(
-                                      AppRadius.full,
-                                    ),
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(
-                                        Icons.cake_outlined,
-                                        size: 14, // Reducido
-                                        color: Colors.white,
-                                      ),
-                                      const SizedBox(width: AppSpacing.xs),
-                                      Text(
-                                        DateFormat(
-                                          'dd/MM/yyyy',
-                                        ).format(user.birthDate!),
-                                        style: AppTextStyles.bodySmall.copyWith(
-                                          // Cambiado a bodySmall
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
 
                     // Contenido principal
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.all(AppSpacing.lg),
-                        child: Column(
-                          children: [
-                            // Card de datos personales
-                            Container(
-                              decoration: AppCardDecoration.elevated,
-                              child: Padding(
-                                padding: const EdgeInsets.all(AppSpacing.lg),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.all(
-                                            AppSpacing.sm,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: primaryColor.withOpacity(
-                                              0.1,
-                                            ),
-                                            borderRadius: BorderRadius.circular(
-                                              AppRadius.md,
-                                            ),
-                                          ),
-                                          child: const Icon(
-                                            Icons.person_outline,
-                                            color: primaryColor,
-                                            size: 20,
+                    SliverPadding(
+                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate([
+                          // Card de datos personales
+                          Container(
+                            decoration: AppCardDecoration.elevated,
+                            child: Padding(
+                              padding: const EdgeInsets.all(AppSpacing.lg),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(
+                                          AppSpacing.sm,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: primaryColor.withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(
+                                            AppRadius.md,
                                           ),
                                         ),
-                                        const SizedBox(width: AppSpacing.md),
-                                        Expanded(
-                                          child: Text(
-                                            'Datos Personales',
-                                            style: AppTextStyles.h3.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                        child: const Icon(
+                                          Icons.person_outline,
+                                          color: primaryColor,
+                                          size: 20,
+                                        ),
+                                      ),
+                                      const SizedBox(width: AppSpacing.md),
+                                      Expanded(
+                                        child: Text(
+                                          'Datos Personales',
+                                          style: AppTextStyles.h3.copyWith(
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                        IconButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder:
-                                                    (ctx) =>
-                                                        const UserFormScreen(
-                                                          isEditing: true,
-                                                        ),
-                                              ),
-                                            );
-                                          },
-                                          icon: Container(
-                                            padding: const EdgeInsets.all(6),
-                                            decoration: BoxDecoration(
-                                              color: secondaryColor.withOpacity(
-                                                0.1,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                    AppRadius.sm,
+                                      ),
+                                      IconButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (ctx) => const UserFormScreen(
+                                                    isEditing: true,
                                                   ),
                                             ),
-                                            child: const Icon(
-                                              Icons.edit_outlined,
-                                              color: secondaryColor,
-                                              size: 16,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: AppSpacing.lg),
-                                    _buildInfoRow(
-                                      Icons.person_outline,
-                                      'Nombre completo',
-                                      '${user.firstName} ${user.lastName}',
-                                    ),
-                                    const SizedBox(height: AppSpacing.md),
-                                    _buildInfoRow(
-                                      Icons.cake_outlined,
-                                      'Fecha de nacimiento',
-                                      DateFormat(
-                                        'dd/MM/yyyy',
-                                      ).format(user.birthDate!),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-
-                            const SizedBox(height: AppSpacing.lg),
-
-                            // Card de direcciones
-                            Container(
-                              decoration: AppCardDecoration.elevated,
-                              child: Padding(
-                                padding: const EdgeInsets.all(AppSpacing.lg),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.all(
-                                            AppSpacing.sm,
-                                          ),
+                                          );
+                                        },
+                                        icon: Container(
+                                          padding: const EdgeInsets.all(6),
                                           decoration: BoxDecoration(
                                             color: secondaryColor.withOpacity(
                                               0.1,
                                             ),
                                             borderRadius: BorderRadius.circular(
-                                              AppRadius.md,
+                                              AppRadius.sm,
                                             ),
                                           ),
                                           child: const Icon(
-                                            Icons.location_on_outlined,
+                                            Icons.edit_outlined,
                                             color: secondaryColor,
-                                            size: 20,
+                                            size: 16,
                                           ),
                                         ),
-                                        const SizedBox(width: AppSpacing.md),
-                                        Expanded(
-                                          child: Text(
-                                            'Direcciones',
-                                            style: AppTextStyles.h3.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                        IconButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder:
-                                                    (ctx) =>
-                                                        const AddressFormScreen(
-                                                          isEditing: true,
-                                                        ),
-                                              ),
-                                            );
-                                          },
-                                          icon: Container(
-                                            padding: const EdgeInsets.all(6),
-                                            decoration: BoxDecoration(
-                                              color: successColor.withOpacity(
-                                                0.1,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                    AppRadius.sm,
-                                                  ),
-                                            ),
-                                            child: const Icon(
-                                              Icons.add,
-                                              color: successColor,
-                                              size: 16,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: AppSpacing.lg),
-
-                                    // Lista de direcciones
-                                    if (user.addresses.isEmpty)
-                                      _buildEmptyAddresses()
-                                    else
-                                      ...user.addresses.asMap().entries.map((
-                                        entry,
-                                      ) {
-                                        final index = entry.key;
-                                        final address = entry.value;
-                                        return Padding(
-                                          padding: EdgeInsets.only(
-                                            bottom:
-                                                index <
-                                                        user.addresses.length -
-                                                            1
-                                                    ? AppSpacing.md
-                                                    : 0,
-                                          ),
-                                          child: _buildAddressCard(
-                                            address,
-                                            userProvider,
-                                          ),
-                                        );
-                                      }).toList(),
-                                  ],
-                                ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: AppSpacing.lg),
+                                  _buildInfoRow(
+                                    Icons.person_outline,
+                                    'Nombre completo',
+                                    '${user.firstName} ${user.lastName}',
+                                  ),
+                                  const SizedBox(height: AppSpacing.md),
+                                  _buildInfoRow(
+                                    Icons.cake_outlined,
+                                    'Fecha de nacimiento',
+                                    DateFormat(
+                                      'dd/MM/yyyy',
+                                    ).format(user.birthDate!),
+                                  ),
+                                ],
                               ),
                             ),
+                          ),
 
-                            const SizedBox(height: AppSpacing.xl),
-                          ],
-                        ),
+                          const SizedBox(height: AppSpacing.lg),
+
+                          // Card de direcciones
+                          Container(
+                            decoration: AppCardDecoration.elevated,
+                            child: Padding(
+                              padding: const EdgeInsets.all(AppSpacing.lg),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(
+                                          AppSpacing.sm,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: secondaryColor.withOpacity(
+                                            0.1,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            AppRadius.md,
+                                          ),
+                                        ),
+                                        child: const Icon(
+                                          Icons.location_on_outlined,
+                                          color: secondaryColor,
+                                          size: 20,
+                                        ),
+                                      ),
+                                      const SizedBox(width: AppSpacing.md),
+                                      Expanded(
+                                        child: Text(
+                                          'Direcciones',
+                                          style: AppTextStyles.h3.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (ctx) =>
+                                                      const AddressFormScreen(
+                                                        isEditing: true,
+                                                      ),
+                                            ),
+                                          );
+                                        },
+                                        icon: Container(
+                                          padding: const EdgeInsets.all(6),
+                                          decoration: BoxDecoration(
+                                            color: successColor.withOpacity(
+                                              0.1,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              AppRadius.sm,
+                                            ),
+                                          ),
+                                          child: const Icon(
+                                            Icons.add,
+                                            color: successColor,
+                                            size: 16,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: AppSpacing.lg),
+
+                                  // Lista de direcciones
+                                  if (user.addresses.isEmpty)
+                                    _buildEmptyAddresses()
+                                  else
+                                    ...user.addresses.asMap().entries.map((
+                                      entry,
+                                    ) {
+                                      final index = entry.key;
+                                      final address = entry.value;
+                                      return Padding(
+                                        padding: EdgeInsets.only(
+                                          bottom:
+                                              index < user.addresses.length - 1
+                                                  ? AppSpacing.md
+                                                  : 0,
+                                        ),
+                                        child: _buildAddressCard(
+                                          address,
+                                          userProvider,
+                                        ),
+                                      );
+                                    }).toList(),
+                                ],
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: AppSpacing.xl),
+                        ]),
                       ),
                     ),
                   ],

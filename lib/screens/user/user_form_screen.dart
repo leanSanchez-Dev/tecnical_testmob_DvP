@@ -78,132 +78,269 @@ class UserFormScreenState extends State<UserFormScreen> {
     final provider = Provider.of<UserProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(centerTitle: true, title: Text('Formulario de Usuario')),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
-            margin: EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withValues(alpha: .5),
-                  blurRadius: 5,
-                  offset: Offset(0, 3),
+      backgroundColor: backgroundColor,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: primaryColor,
+        centerTitle: true,
+        title: Text(
+          'Datos Personales',
+          style: AppTextStyles.h2.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        leading:
+            widget.isEditing
+                ? IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () => Navigator.pop(context),
+                )
+                : null,
+      ),
+      body: Container(
+        decoration: BoxDecoration(gradient: AppGradients.surface),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: Column(
+              children: [
+                const SizedBox(height: AppSpacing.md),
+
+                // Card principal con formulario
+                Container(
+                  decoration: AppCardDecoration.elevated,
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.xl),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Header del formulario
+                          Center(
+                            child: Column(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(AppSpacing.md),
+                                  decoration: BoxDecoration(
+                                    color: primaryColor.withOpacity(0.1),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.person_add,
+                                    size: 40,
+                                    color: primaryColor,
+                                  ),
+                                ),
+                                const SizedBox(height: AppSpacing.md),
+                                Text(
+                                  widget.isEditing
+                                      ? 'Editar información personal'
+                                      : 'Registrar datos personales',
+                                  style: AppTextStyles.h3.copyWith(
+                                    color: textPrimaryColor,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: AppSpacing.sm),
+                                Text(
+                                  'Complete sus datos básicos para continuar',
+                                  style: AppTextStyles.bodyMedium.copyWith(
+                                    color: textSecondaryColor,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.xl),
+
+                          // Campos del formulario
+                          CustomInput(
+                            controller: _firstNameController,
+                            label: 'Nombre',
+                            hint: 'Ingrese su nombre',
+                            prefixIcon: Icons.person_outline,
+                            keyboardType: TextInputType.name,
+                          ),
+                          const SizedBox(height: AppSpacing.lg),
+
+                          CustomInput(
+                            controller: _lastNameController,
+                            label: 'Apellido',
+                            hint: 'Ingrese su apellido',
+                            prefixIcon: Icons.person_outline,
+                            keyboardType: TextInputType.name,
+                          ),
+                          const SizedBox(height: AppSpacing.lg),
+
+                          // Campo de fecha de nacimiento personalizado
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    'Fecha de Nacimiento',
+                                    style: AppTextStyles.label.copyWith(
+                                      color: textSecondaryColor,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(width: AppSpacing.xs),
+                                  Text(
+                                    '*',
+                                    style: AppTextStyles.label.copyWith(
+                                      color: errorColor,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: AppSpacing.sm),
+
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(
+                                    AppRadius.lg,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.02),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: InkWell(
+                                  onTap: () => _selectDate(context),
+                                  borderRadius: BorderRadius.circular(
+                                    AppRadius.lg,
+                                  ),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: AppSpacing.md,
+                                      vertical: AppSpacing.md + 2,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: surfaceColor,
+                                      borderRadius: BorderRadius.circular(
+                                        AppRadius.lg,
+                                      ),
+                                      border: Border.all(
+                                        color: borderColor,
+                                        width: 1.5,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          margin: const EdgeInsets.only(
+                                            right: AppSpacing.sm,
+                                          ),
+                                          child: const Icon(
+                                            Icons.calendar_today_outlined,
+                                            color: textMutedColor,
+                                            size: 20,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            birthDate ?? 'Seleccione una fecha',
+                                            style: AppTextStyles.bodyMedium
+                                                .copyWith(
+                                                  color:
+                                                      birthDate != null
+                                                          ? textPrimaryColor
+                                                          : textMutedColor,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                          ),
+                                        ),
+                                        const Icon(
+                                          Icons.arrow_drop_down,
+                                          color: textMutedColor,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: AppSpacing.xl * 2),
+
+                          // Botón de acción
+                          SizedBox(
+                            width: double.infinity,
+                            height: 56,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  final newUser = User(
+                                    firstName: _firstNameController.text,
+                                    lastName: _lastNameController.text,
+                                    birthDate: _birthDate,
+                                  );
+                                  if (!widget.isEditing) {
+                                    provider.createUser(newUser);
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (ctx) => AddressFormScreen(),
+                                        settings: RouteSettings(
+                                          arguments: true,
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    _submitForm(provider);
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (ctx) => UserProfileScreen(),
+                                        settings: RouteSettings(
+                                          arguments: true,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                              style: AppButtonStyles.primary,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    widget.isEditing
+                                        ? 'Guardar Cambios'
+                                        : 'Continuar',
+                                    style: AppTextStyles.bodyLarge.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(width: AppSpacing.sm),
+                                  Icon(
+                                    widget.isEditing
+                                        ? Icons.save
+                                        : Icons.arrow_forward,
+                                    size: 20,
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ],
-            ),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  Text(
-                    'Datos Personales',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  CustomInput(
-                    controller: _firstNameController,
-                    label: 'Nombre',
-                  ),
-                  CustomInput(
-                    controller: _lastNameController,
-                    label: 'Apellido',
-                  ),
-                  const SizedBox(height: 8),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Fecha de Nacimiento",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.normal,
-                        color: secondaryColor.withValues(alpha: .9),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  InkWell(
-                    onTap: () => _selectDate(context),
-                    child: InputDecorator(
-                      decoration: InputDecoration(
-                        // label: Text('Fecha de Nacimiento'),
-                        labelStyle: const TextStyle(color: primaryColor),
-                        // prefixIcon: Icon(Icons.email),
-                        filled: true,
-                        fillColor: accentColor,
-                        hintText: 'Seleccione una fecha',
-                        hintStyle: TextStyle(
-                          color: Colors.grey.withValues(alpha: .75),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 0.0,
-                          horizontal: 20.0,
-                        ),
-                        border: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: primaryColor,
-                            width: 1.0,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: secondaryColor,
-                            width: 1.0,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        ),
-                        errorBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(color: errorColor, width: 1.0),
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        ),
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: primaryColor,
-                            width: 1.0,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        ),
-                      ),
-                      child: Text(birthDate ?? ''),
-                    ),
-                  ),
-                  SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        final newUser = User(
-                          firstName: _firstNameController.text,
-                          lastName: _lastNameController.text,
-                          birthDate: _birthDate,
-                        );
-                        if (!widget.isEditing) {
-                          provider.createUser(newUser);
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (ctx) => AddressFormScreen(),
-                              settings: RouteSettings(arguments: true),
-                            ),
-                          );
-                        } else {
-                          _submitForm(provider);
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (ctx) => UserProfileScreen(),
-                              settings: RouteSettings(arguments: true),
-                            ),
-                          );
-                        }
-                      }
-                    },
-                    child: Text(widget.isEditing ? 'Guardar' : 'Continuar'),
-                  ),
-                ],
-              ),
             ),
           ),
         ),

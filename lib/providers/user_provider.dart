@@ -52,4 +52,12 @@ class UserProvider with ChangeNotifier {
     _saveUser();
     notifyListeners();
   }
+
+  // Limpiar datos del usuario y de SharedPreferences
+  Future<void> clearUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_userKey);
+    _user = null;
+    notifyListeners();
+  }
 }
