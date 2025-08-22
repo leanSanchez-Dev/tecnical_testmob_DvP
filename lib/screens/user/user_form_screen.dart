@@ -28,7 +28,7 @@ class UserFormScreenState extends State<UserFormScreen> {
       context: context,
       initialDate: _birthDate!,
       firstDate: DateTime(1917, 1),
-      lastDate: DateTime(2025, 5),
+      lastDate: DateTime.now(),
     );
     if (picked != null) {
       setState(() {
@@ -65,7 +65,11 @@ class UserFormScreenState extends State<UserFormScreen> {
       birthDate = DateFormat.yMd().format(user.birthDate!);
       _birthDate = user.birthDate;
     } else {
-      _birthDate = DateTime.now();
+      _birthDate = DateTime(
+        1990,
+        1,
+        1,
+      ); // Fecha por defecto válida para nacimiento
     }
   }
 
