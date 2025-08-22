@@ -192,66 +192,12 @@ lib/
 - Serialización JSON automática
 - Carga de datos al iniciar la app
 
-## 📊 Métricas de Calidad
-
-### **Testing**
-
-- 🎯 **Cobertura**: 90%+ en componentes críticos
-- ✅ **Unit Tests**: 100% modelos y providers
-- 🎨 **Widget Tests**: Todas las pantallas cubiertas
-- 🔗 **Integration**: Flujos principales probados
-
-### **Código**
-
-- 📏 **Linting**: Flutter Lints habilitado
-- 🏗️ **Arquitectura**: SOLID principles aplicados
-- 📝 **Documentación**: Código bien comentado
-- 🧹 **Clean Code**: Nombres descriptivos y estructura clara
-
-## 🏆 Cumplimiento de Requerimientos
-
-### ✅ **Prueba Técnica - Completada**
-
-**Requerimientos Obligatorios:**
-
-- ✅ Proyecto mobile en Flutter
-- ✅ Formulario de usuario (nombre, apellido, fecha nacimiento)
-- ✅ Direcciones físicas (múltiples por usuario)
-- ✅ Mínimo 3 pantallas
-- ✅ Buenas prácticas y control de errores
-- ✅ Pintar datos del usuario en cualquier momento
-
-**Puntos de Seniority:**
-
-- ✅ Creatividad en la solución
-- ✅ Calidad del código y estructura
-- ✅ Eficiencia de algoritmos
-- ✅ Familiaridad con frameworks
-- ✅ Principios SOLID y patrones de diseño
-- ✅ **Suite completa de testing** (Unit Testing)
-
-## 🎯 Próximas Mejoras
-
-### **Funcionalidades**
-
-- [ ] Autenticación de usuarios
-- [ ] Sincronización con backend
-- [ ] Notificaciones push
-- [ ] Modo offline avanzado
-
-### **Técnicas**
-
-- [ ] CI/CD con GitHub Actions
-- [ ] Análisis estático automatizado
-- [ ] Performance monitoring
-- [ ] Internacionalización (i18n)
-
 ## 👨‍💻 Autor
 
 **Leonardo Sánchez**  
 Desarrollador Full Stack Flutter  
-📧 Email: [tu-email]  
-🔗 LinkedIn: [tu-linkedin]  
+📧 Email: [leansanchez14@gmail.com]  
+🔗 LinkedIn: [https://www.linkedin.com/in/leansanchez-dev/]  
 🐙 GitHub: [@leanSanchez-Dev](https://github.com/leanSanchez-Dev)
 
 ---
