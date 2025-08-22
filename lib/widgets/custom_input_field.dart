@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_app_dvp/utils/constants.dart';
+import 'package:flutter_app_dvp/utils/input_validators.dart';
 
 class CustomInput extends StatefulWidget {
   final TextEditingController controller;
@@ -12,6 +14,10 @@ class CustomInput extends StatefulWidget {
   final bool isPassword;
   final bool isRequired;
   final String? Function(String?)? validator;
+  final ValidationType? validationType;
+  final List<TextInputFormatter>? inputFormatters;
+  final int? maxLength;
+  final int? minLength;
 
   const CustomInput({
     super.key,
@@ -25,6 +31,10 @@ class CustomInput extends StatefulWidget {
     this.isPassword = false,
     this.isRequired = true,
     this.validator,
+    this.validationType,
+    this.inputFormatters,
+    this.maxLength,
+    this.minLength,
   });
 
   @override
@@ -39,6 +49,81 @@ class _CustomInputState extends State<CustomInput> {
   void initState() {
     super.initState();
     _obscureText = widget.isPassword;
+  }
+
+  // Método para obtener el validador apropiado
+  String? Function(String?) _getValidator() {
+    if (widget.validator != null) {
+      return widget.validator!;
+    }
+
+    if (widget.validationType != null) {
+      switch (widget.validationType!) {
+        case ValidationType.name:
+          return (value) =>
+              InputValidators.validateName(value, fieldName: widget.label);
+        case ValidationType.text:
+          return (value) => InputValidators.validateText(
+            value,
+            fieldName: widget.label,
+            minLength: widget.minLength,
+            maxLength: widget.maxLength,
+          );
+        case ValidationType.zipCode:
+          return (value) =>
+              InputValidators.validateZipCode(value, fieldName: widget.label);
+        case ValidationType.number:
+          return (value) =>
+              InputValidators.validateNumber(value, fieldName: widget.label);
+        case ValidationType.email:
+          return (value) =>
+              InputValidators.validateEmail(value, fieldName: widget.label);
+        case ValidationType.phone:
+          return (value) =>
+              InputValidators.validatePhone(value, fieldName: widget.label);
+        case ValidationType.custom:
+          return (value) => InputValidators.validateCustom(
+            value,
+            fieldName: widget.label,
+            required: widget.isRequired,
+            minLength: widget.minLength,
+            maxLength: widget.maxLength,
+          );
+      }
+    }
+
+    // Validador por defecto
+    return (value) =>
+        widget.isRequired && (value?.isEmpty ?? true)
+            ? 'Este campo es requerido'
+            : null;
+  }
+
+  // Método para obtener los formatters apropiados
+  List<TextInputFormatter> _getInputFormatters() {
+    if (widget.inputFormatters != null) {
+      return widget.inputFormatters!;
+    }
+
+    if (widget.validationType != null) {
+      switch (widget.validationType!) {
+        case ValidationType.name:
+          return InputFormatters.nameFormatter();
+        case ValidationType.zipCode:
+          return InputFormatters.zipCodeFormatter();
+        case ValidationType.number:
+          return InputFormatters.numberFormatter(maxLength: widget.maxLength);
+        case ValidationType.email:
+          return InputFormatters.emailFormatter();
+        case ValidationType.phone:
+          return InputFormatters.phoneFormatter();
+        case ValidationType.text:
+        case ValidationType.custom:
+          return InputFormatters.textFormatter(maxLength: widget.maxLength);
+      }
+    }
+
+    return [];
   }
 
   @override
@@ -101,12 +186,9 @@ class _CustomInputState extends State<CustomInput> {
               controller: widget.controller,
               keyboardType: widget.keyboardType,
               obscureText: _obscureText,
-              validator:
-                  widget.validator ??
-                  (value) =>
-                      widget.isRequired && (value?.isEmpty ?? true)
-                          ? 'Este campo es requerido'
-                          : null,
+              validator: _getValidator(),
+              inputFormatters: _getInputFormatters(),
+              maxLength: widget.maxLength,
               style: AppTextStyles.bodyMedium.copyWith(
                 color: textPrimaryColor,
                 fontSize: 16,
@@ -117,7 +199,10 @@ class _CustomInputState extends State<CustomInput> {
                 hintStyle: AppTextStyles.bodyMedium.copyWith(
                   color: textMutedColor,
                 ),
-
+                counterText:
+                    widget.maxLength != null
+                        ? null
+                        : '', // Ocultar contador si no hay maxLength
                 // Iconos
                 prefixIcon:
                     widget.prefixIcon != null

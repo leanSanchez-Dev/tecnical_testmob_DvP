@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_dvp/screens/user/address_form_screen.dart';
 import 'package:flutter_app_dvp/screens/user/user_profile_screen.dart';
 import 'package:flutter_app_dvp/utils/constants.dart';
+import 'package:flutter_app_dvp/utils/input_validators.dart';
 import 'package:flutter_app_dvp/widgets/custom_input_field.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -40,9 +41,18 @@ class UserFormScreenState extends State<UserFormScreen> {
 
   void _submitForm(UserProvider provider) {
     if (_formKey.currentState!.validate()) {
+      // Validar fecha de nacimiento
+      final dateValidation = InputValidators.validateBirthDate(_birthDate);
+      if (dateValidation != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(dateValidation), backgroundColor: errorColor),
+        );
+        return;
+      }
+
       final updatedUser = User(
-        firstName: _firstNameController.text,
-        lastName: _lastNameController.text,
+        firstName: _firstNameController.text.trim(),
+        lastName: _lastNameController.text.trim(),
         birthDate: _birthDate,
         addresses:
             provider.user?.addresses ??
@@ -163,6 +173,8 @@ class UserFormScreenState extends State<UserFormScreen> {
                             hint: 'Ingrese su nombre',
                             prefixIcon: Icons.person_outline,
                             keyboardType: TextInputType.name,
+                            validationType: ValidationType.name,
+                            maxLength: 50,
                           ),
                           const SizedBox(height: AppSpacing.lg),
 
@@ -172,6 +184,8 @@ class UserFormScreenState extends State<UserFormScreen> {
                             hint: 'Ingrese su apellido',
                             prefixIcon: Icons.person_outline,
                             keyboardType: TextInputType.name,
+                            validationType: ValidationType.name,
+                            maxLength: 50,
                           ),
                           const SizedBox(height: AppSpacing.lg),
 
@@ -280,9 +294,24 @@ class UserFormScreenState extends State<UserFormScreen> {
                             child: ElevatedButton(
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
+                                  // Validar fecha de nacimiento
+                                  final dateValidation =
+                                      InputValidators.validateBirthDate(
+                                        _birthDate,
+                                      );
+                                  if (dateValidation != null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(dateValidation),
+                                        backgroundColor: errorColor,
+                                      ),
+                                    );
+                                    return;
+                                  }
+
                                   final newUser = User(
-                                    firstName: _firstNameController.text,
-                                    lastName: _lastNameController.text,
+                                    firstName: _firstNameController.text.trim(),
+                                    lastName: _lastNameController.text.trim(),
                                     birthDate: _birthDate,
                                   );
                                   if (!widget.isEditing) {

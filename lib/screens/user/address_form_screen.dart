@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_dvp/utils/constants.dart';
+import 'package:flutter_app_dvp/utils/input_validators.dart';
 import 'package:flutter_app_dvp/widgets/custom_input_field.dart';
 import 'package:provider/provider.dart';
 import '../../models/address_model.dart';
@@ -24,10 +25,10 @@ class AddressFormScreenState extends State<AddressFormScreen> {
   void _submitForm(UserProvider provider) {
     if (_formKey.currentState!.validate()) {
       final newAddress = Address(
-        street: _streetController.text,
-        city: _cityController.text,
-        state: _stateController.text,
-        zipCode: _zipController.text,
+        street: _streetController.text.trim(),
+        city: _cityController.text.trim(),
+        state: _stateController.text.trim(),
+        zipCode: _zipController.text.trim(),
       );
 
       provider.addAddress(newAddress);
@@ -138,6 +139,9 @@ class AddressFormScreenState extends State<AddressFormScreen> {
                             hint: 'Ej. Calle 123 # 456-789',
                             prefixIcon: Icons.home_outlined,
                             keyboardType: TextInputType.streetAddress,
+                            validationType: ValidationType.text,
+                            minLength: 5,
+                            maxLength: 100,
                           ),
                           const SizedBox(height: AppSpacing.lg),
 
@@ -147,6 +151,9 @@ class AddressFormScreenState extends State<AddressFormScreen> {
                             hint: 'Ej. Antioquia',
                             prefixIcon: Icons.location_city_outlined,
                             keyboardType: TextInputType.text,
+                            validationType: ValidationType.text,
+                            minLength: 2,
+                            maxLength: 50,
                           ),
                           const SizedBox(height: AppSpacing.lg),
 
@@ -156,6 +163,9 @@ class AddressFormScreenState extends State<AddressFormScreen> {
                             hint: 'Ej. Medellín',
                             prefixIcon: Icons.place_outlined,
                             keyboardType: TextInputType.text,
+                            validationType: ValidationType.text,
+                            minLength: 2,
+                            maxLength: 50,
                           ),
                           const SizedBox(height: AppSpacing.lg),
 
@@ -165,6 +175,7 @@ class AddressFormScreenState extends State<AddressFormScreen> {
                             hint: 'Ej. 050022',
                             prefixIcon: Icons.markunread_mailbox_outlined,
                             keyboardType: TextInputType.number,
+                            validationType: ValidationType.zipCode,
                           ),
 
                           const SizedBox(height: AppSpacing.xl * 2),
