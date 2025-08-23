@@ -73,8 +73,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               false, // Prevenir que Flutter muestre automáticamente el botón back
           actions: [
             IconButton(
-              icon: const Icon(Icons.more_vert, color: Colors.white),
-              onPressed: () => _showOptionsBottomSheet(context, userProvider),
+              icon: const Icon(Icons.logout, color: Colors.white),
+              onPressed: () => _showLogoutDialog(context, userProvider),
+              tooltip: 'Cerrar Sesión',
             ),
           ],
         ),
@@ -625,69 +626,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
-  // Bottom sheet para opciones adicionales
-  void _showOptionsBottomSheet(
-    BuildContext context,
-    UserProvider userProvider,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
-      ),
-      builder:
-          (context) => Container(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: borderColor,
-                    borderRadius: BorderRadius.circular(AppRadius.sm),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: errorColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(AppRadius.sm),
-                    ),
-                    child: const Icon(Icons.logout, color: errorColor),
-                  ),
-                  title: Text(
-                    'Cerrar Sesión',
-                    style: AppTextStyles.bodyLarge.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  subtitle: Text(
-                    'Eliminar todos los datos y salir',
-                    style: AppTextStyles.bodySmall.copyWith(
-                      color: textMutedColor,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _showLogoutDialog(context, userProvider);
-                  },
-                ),
-              ],
-            ),
-          ),
-    );
-  }
-
   // Diálogo de confirmación para cerrar sesión
   void _showLogoutDialog(BuildContext context, UserProvider userProvider) {
     showDialog(
       context: context,
+      barrierDismissible: false, // Evitar cerrar accidentalmente
       builder:
-          (ctx) => AlertDialog(
+          (dialogContext) => AlertDialog(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppRadius.lg),
             ),
@@ -719,7 +664,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             ),
             actions: [
               TextButton(
-                onPressed: () => Navigator.pop(ctx),
+                onPressed: () => Navigator.of(dialogContext).pop(),
                 style: AppButtonStyles.secondary,
                 child: Text(
                   'Cancelar',
@@ -732,47 +677,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               const SizedBox(width: AppSpacing.sm),
               ElevatedButton(
                 onPressed: () async {
-                  try {
-                    // Activar estado de logout
-                    setState(() {
-                      _isLoggingOut = true;
-                    });
+                  // Cerrar diálogo usando su contexto
+                  Navigator.of(dialogContext).pop();
 
-                    // Cerrar el diálogo primero
-                    Navigator.pop(ctx);
-
-                    // Esperar un momento para que el diálogo se cierre completamente
-                    await Future.delayed(const Duration(milliseconds: 100));
-
-                    // Realizar el logout
-                    await userProvider.clearUser();
-
-                    // Navegar al inicio verificando que el context siga válido
-                    if (mounted && context.mounted) {
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        '/',
-                        (route) => false,
-                      );
-                    }
-                  } catch (e) {
-                    debugPrint('Error durante logout: $e');
-                    // En caso de error, intentar navegar de todos modos
-                    if (mounted && context.mounted) {
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        '/',
-                        (route) => false,
-                      );
-                    }
-                  } finally {
-                    // Restaurar estado si algo falla
-                    if (mounted) {
-                      setState(() {
-                        _isLoggingOut = false;
-                      });
-                    }
-                  }
+                  // Realizar logout de forma inmediata y directa
+                  await _performLogout(userProvider);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: errorColor,
@@ -792,6 +701,52 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             ],
           ),
     );
+  }
+
+  // Función separada para realizar el logout de forma segura
+  Future<void> _performLogout(UserProvider userProvider) async {
+    try {
+      // Activar estado de logout
+      if (mounted) {
+        setState(() {
+          _isLoggingOut = true;
+        });
+      }
+
+      // Limpiar datos del usuario
+      await userProvider.clearUser();
+
+      // Usar el contexto de forma segura desde el widget montado
+      if (mounted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            // Navegar al home de forma directa
+            Navigator.of(
+              context,
+              rootNavigator: true,
+            ).pushNamedAndRemoveUntil('/', (route) => false);
+          }
+        });
+      }
+    } catch (e) {
+      debugPrint('Error durante logout: $e');
+
+      // Fallback: navegar directamente sin rootNavigator
+      if (mounted) {
+        try {
+          Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+        } catch (e2) {
+          debugPrint('Error en fallback: $e2');
+        }
+      }
+    } finally {
+      // Limpiar estado
+      if (mounted) {
+        setState(() {
+          _isLoggingOut = false;
+        });
+      }
+    }
   }
 
   // Diálogo para eliminar dirección

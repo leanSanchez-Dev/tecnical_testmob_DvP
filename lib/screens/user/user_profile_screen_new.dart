@@ -667,12 +667,12 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               const SizedBox(width: AppSpacing.sm),
               ElevatedButton(
                 onPressed: () {
-                  userProvider.clearUser();
                   Navigator.pushNamedAndRemoveUntil(
                     context,
                     '/',
-                    (route) => false,
+                    (route) => true,
                   );
+                  userProvider.clearUser();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: errorColor,
