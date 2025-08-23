@@ -39,11 +39,16 @@ class AddressFormScreenState extends State<AddressFormScreen> {
       _stateController.clear();
       _zipController.clear();
 
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (ctx) => UserProfileScreen()),
-        (route) => false,
-      );
+      // Si estamos editando, simplemente regresar a la pantalla anterior
+      if (widget.isEditing) {
+        Navigator.pop(context);
+      } else {
+        // Si es una nueva dirección, navegar al perfil
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (ctx) => UserProfileScreen()),
+        );
+      }
 
       // Mostrar confirmación
       ScaffoldMessenger.of(
@@ -143,7 +148,7 @@ class AddressFormScreenState extends State<AddressFormScreen> {
                             minLength: 5,
                             maxLength: 100,
                           ),
-                          const SizedBox(height: AppSpacing.lg),
+                          const SizedBox(height: AppSpacing.sm),
 
                           CustomInput(
                             controller: _cityController,
@@ -155,7 +160,7 @@ class AddressFormScreenState extends State<AddressFormScreen> {
                             minLength: 2,
                             maxLength: 50,
                           ),
-                          const SizedBox(height: AppSpacing.lg),
+                          const SizedBox(height: AppSpacing.sm),
 
                           CustomInput(
                             controller: _stateController,
@@ -167,7 +172,7 @@ class AddressFormScreenState extends State<AddressFormScreen> {
                             minLength: 2,
                             maxLength: 50,
                           ),
-                          const SizedBox(height: AppSpacing.lg),
+                          const SizedBox(height: AppSpacing.sm),
 
                           CustomInput(
                             controller: _zipController,
